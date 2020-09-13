@@ -27,7 +27,7 @@ namespace ascii_refrigerator
 
 		character_space get_character_space() const;
 
-		void generate(std::string fileName, int width, int height, std::ostream& outputStream) const;
+		void generate(std::string fileName, int width, int height, std::ostream& outputStream, bool invertCharacterSpace = false) const;
 
 		protected:
 		const character_space characterSpace;
@@ -37,7 +37,7 @@ namespace ascii_refrigerator
 
 		void resize_view(boost::gil::rgb8c_view_t sourceView, boost::gil::rgb8_view_t destinationView) const;
 
-		void generate_ascii(boost::gil::rgb8c_view_t sourceView, std::ostream& outputStream) const;
+		void generate_ascii(boost::gil::rgb8c_view_t sourceView, std::ostream& outputStream, bool invertCharacterSpace = false) const;
 
 		float get_pixel_grayscale(boost::gil::rgb8c_pixel_t pixel) const;
 	};
