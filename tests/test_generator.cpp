@@ -5,9 +5,7 @@
 
 TEST(GeneratorTests, ResizeMethodTest)
 {
-	ascii_refrigerator::generator generator;
-
-	generator.set_resize_method(ascii_refrigerator::resize_method::bilinear);
+	ascii_refrigerator::generator generator(ascii_refrigerator::resize_method::bilinear);
 
 	ASSERT_EQ(generator.get_resize_method(), ascii_refrigerator::resize_method::bilinear);
 }

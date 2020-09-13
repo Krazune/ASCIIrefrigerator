@@ -19,11 +19,6 @@ namespace ascii_refrigerator
 	generator::generator(resize_method resizeMethod) : resizeMethod(resizeMethod), characterSpace(character_space(" #")) {}
 	generator::generator(resize_method resizeMethod, character_space characterSpace) : resizeMethod(resizeMethod), characterSpace(characterSpace) {}
 
-	void generator::set_resize_method(resize_method newResizeMethod)
-	{
-		resizeMethod = newResizeMethod;
-	}
-
 	resize_method generator::get_resize_method() const
 	{
 		return resizeMethod;

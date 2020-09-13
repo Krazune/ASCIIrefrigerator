@@ -22,7 +22,6 @@ namespace ascii_refrigerator
 		generator(resize_method resizeMethod);
 		generator(resize_method resizeMethod, character_space characterSpace);
 
-		void set_resize_method(resize_method newResizeMethod);
 		resize_method get_resize_method() const;
 
 		character_space get_character_space() const;
@@ -31,7 +30,7 @@ namespace ascii_refrigerator
 
 		protected:
 		const character_space characterSpace;
-		resize_method resizeMethod;
+		const resize_method resizeMethod;
 
 		void read_image(std::string fileName, boost::gil::rgb8_image_t& destinationImage) const;
 
