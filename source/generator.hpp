@@ -6,6 +6,7 @@
 
 #include <boost/gil.hpp>
 
+#include "character_space.hpp"
 #include "resize_method.hpp"
 
 namespace ascii_refrigerator
@@ -13,28 +14,30 @@ namespace ascii_refrigerator
 	class generator
 	{
 		public:
+		const static character_space bwSpace;
+		const static character_space gradient9Space;
+
 		generator();
-		generator(std::string symbolSet);
+		generator(character_space characterSpace);
 		generator(resize_method resizeMethod);
-		generator(resize_method resizeMethod, std::string symbolSet);
+		generator(resize_method resizeMethod, character_space characterSpace);
 
 		void set_resize_method(resize_method newResizeMethod);
 		resize_method get_resize_method() const;
 
-		void set_symbol_set(std::string newSymbolSet);
-		std::string get_symbol_set() const;
+		character_space get_character_space() const;
 
-		void generate(std::string fileName, int width, int height, std::ostream& outputStream) const;
+		void generate(std::string fileName, int width, int height, std::ostream& outputStream, bool invertCharacterSpace = false) const;
 
 		protected:
-		std::string symbolSet; // Temporary - this represents the symbols that will be used to generate the output.
+		const character_space characterSpace;
 		resize_method resizeMethod;
 
 		void read_image(std::string fileName, boost::gil::rgb8_image_t& destinationImage) const;
 
 		void resize_view(boost::gil::rgb8c_view_t sourceView, boost::gil::rgb8_view_t destinationView) const;
 
-		void generate_ascii(boost::gil::rgb8c_view_t sourceView, std::ostream& outputStream) const;
+		void generate_ascii(boost::gil::rgb8c_view_t sourceView, std::ostream& outputStream, bool invertCharacterSpace = false) const;
 
 		float get_pixel_grayscale(boost::gil::rgb8c_pixel_t pixel) const;
 	};

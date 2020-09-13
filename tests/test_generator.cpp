@@ -12,11 +12,9 @@ TEST(GeneratorTests, ResizeMethodTest)
 	ASSERT_EQ(generator.get_resize_method(), ascii_refrigerator::resize_method::bilinear);
 }
 
-TEST(GeneratorTests, SymbolSetTest)
+TEST(GeneratorTests, CharacterSpaceTest)
 {
-	ascii_refrigerator::generator generator;
+	ascii_refrigerator::generator generator(ascii_refrigerator::character_space(" .+#"));
 
-	generator.set_symbol_set(" .+#");
-
-	ASSERT_STREQ(generator.get_symbol_set().c_str(), " .+#");
+	ASSERT_STREQ(generator.get_character_space().get_characters().c_str(), " .+#");
 }

@@ -10,10 +10,13 @@
 
 namespace ascii_refrigerator
 {
-	generator::generator() : resizeMethod(resize_method::nearest_neighbor), symbolSet(" #") {}
-	generator::generator(std::string symbolSet) : resizeMethod(resize_method::nearest_neighbor), symbolSet(symbolSet) {}
-	generator::generator(resize_method resizeMethod) : resizeMethod(resizeMethod), symbolSet(" #") {}
-	generator::generator(resize_method resizeMethod, std::string symbolSet) : resizeMethod(resizeMethod), symbolSet(symbolSet) {}
+	const character_space generator::bwSpace(" @");
+	const character_space generator::gradient9Space(" .:;*+%#@");
+
+	generator::generator() : resizeMethod(resize_method::nearest_neighbor), characterSpace(character_space(" #")) {}
+	generator::generator(character_space characterSpace) : resizeMethod(resize_method::nearest_neighbor), characterSpace(characterSpace) {}
+	generator::generator(resize_method resizeMethod) : resizeMethod(resizeMethod), characterSpace(character_space(" #")) {}
+	generator::generator(resize_method resizeMethod, character_space characterSpace) : resizeMethod(resizeMethod), characterSpace(characterSpace) {}
 
 	void generator::set_resize_method(resize_method newResizeMethod)
 	{
@@ -25,17 +28,12 @@ namespace ascii_refrigerator
 		return resizeMethod;
 	}
 
-	void generator::set_symbol_set(std::string newSymbolSet)
+	character_space generator::get_character_space() const
 	{
-		symbolSet = newSymbolSet;
+		return characterSpace;
 	}
 
-	std::string generator::get_symbol_set() const
-	{
-		return symbolSet;
-	}
-
-	void generator::generate(std::string fileName, int width, int height, std::ostream &outputStream) const
+	void generator::generate(std::string fileName, int width, int height, std::ostream &outputStream, bool invertCharacterSpace) const
 	{
 		boost::gil::rgb8_image_t inputFile;
 
@@ -45,7 +43,7 @@ namespace ascii_refrigerator
 
 		resize_view(boost::gil::const_view(inputFile), boost::gil::view(resizedImage));
 
-		generate_ascii(boost::gil::const_view(resizedImage), outputStream);
+		generate_ascii(boost::gil::const_view(resizedImage), outputStream, invertCharacterSpace);
 	}
 
 	void generator::read_image(std::string fileName, boost::gil::rgb8_image_t& destinationImage) const
@@ -67,15 +65,26 @@ namespace ascii_refrigerator
 		}
 	}
 
-	void generator::generate_ascii(boost::gil::rgb8c_view_t sourceView, std::ostream &outputStream) const
+	void generator::generate_ascii(boost::gil::rgb8c_view_t sourceView, std::ostream &outputStream, bool invertCharacterSpace) const
 	{
 		for (int y = 0; y < sourceView.height(); ++y)
 		{
 			for (int x = 0; x < sourceView.width(); ++x)
 			{
 				float pixelGrayscale = get_pixel_grayscale(*(sourceView.at(x, y)));
+				int characterIndex = pixelGrayscale * (characterSpace.size() - 1);
+				char outputCharacter;
 
-				outputStream << symbolSet[pixelGrayscale * (symbolSet.size() - 1)];
+				if (invertCharacterSpace)
+				{
+					outputCharacter = characterSpace.at_reversed(characterIndex);
+				}
+				else
+				{
+					outputCharacter = characterSpace.at(characterIndex);
+				}
+
+				outputStream << outputCharacter;
 			}
 
 			outputStream << '\n';
