@@ -72,7 +72,7 @@ namespace ascii_refrigerator
 			for (int x = 0; x < sourceView.width(); ++x)
 			{
 				float pixelGrayscale = get_pixel_grayscale(*(sourceView.at(x, y)));
-				int characterIndex = pixelGrayscale * (characterSpace.size() - 1);
+				int characterIndex = std::round(pixelGrayscale * (float)(characterSpace.size() - 1));
 				char outputCharacter;
 
 				if (invertCharacterSpace)
