@@ -2,7 +2,7 @@
 #define ASCII_REFRIGERATOR_GENERATOR_HPP
 
 #include <string>
-#include <iostream>
+#include <ostream>
 
 #include <boost/gil.hpp>
 

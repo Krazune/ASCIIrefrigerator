@@ -1,4 +1,5 @@
 #include <string>
+#include <ostream>
 
 #include <boost/gil.hpp>
 #include <boost/gil/extension/io/bmp.hpp>
