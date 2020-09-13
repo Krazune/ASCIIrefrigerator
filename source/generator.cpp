@@ -10,6 +10,9 @@
 
 namespace ascii_refrigerator
 {
+	const character_space generator::bwSpace(" @");
+	const character_space generator::gradient9Space(" .:;*+%#@");
+
 	generator::generator() : resizeMethod(resize_method::nearest_neighbor), characterSpace(character_space(" #")) {}
 	generator::generator(character_space characterSpace) : resizeMethod(resize_method::nearest_neighbor), characterSpace(characterSpace) {}
 	generator::generator(resize_method resizeMethod) : resizeMethod(resizeMethod), characterSpace(character_space(" #")) {}

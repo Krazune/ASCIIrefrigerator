@@ -14,6 +14,9 @@ namespace ascii_refrigerator
 	class generator
 	{
 		public:
+		const static character_space bwSpace;
+		const static character_space gradient9Space;
+
 		generator();
 		generator(character_space characterSpace);
 		generator(resize_method resizeMethod);
