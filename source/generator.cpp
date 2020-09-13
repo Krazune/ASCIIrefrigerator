@@ -10,10 +10,10 @@
 
 namespace ascii_refrigerator
 {
-	generator::generator() : resizeMethod(resize_method::nearest_neighbor), symbolSet(" #") {}
-	generator::generator(std::string symbolSet) : resizeMethod(resize_method::nearest_neighbor), symbolSet(symbolSet) {}
-	generator::generator(resize_method resizeMethod) : resizeMethod(resizeMethod), symbolSet(" #") {}
-	generator::generator(resize_method resizeMethod, std::string symbolSet) : resizeMethod(resizeMethod), symbolSet(symbolSet) {}
+	generator::generator() : resizeMethod(resize_method::nearest_neighbor), characterSpace(character_space(" #")) {}
+	generator::generator(character_space characterSpace) : resizeMethod(resize_method::nearest_neighbor), characterSpace(characterSpace) {}
+	generator::generator(resize_method resizeMethod) : resizeMethod(resizeMethod), characterSpace(character_space(" #")) {}
+	generator::generator(resize_method resizeMethod, character_space characterSpace) : resizeMethod(resizeMethod), characterSpace(characterSpace) {}
 
 	void generator::set_resize_method(resize_method newResizeMethod)
 	{
@@ -25,14 +25,9 @@ namespace ascii_refrigerator
 		return resizeMethod;
 	}
 
-	void generator::set_symbol_set(std::string newSymbolSet)
+	character_space generator::get_character_space() const
 	{
-		symbolSet = newSymbolSet;
-	}
-
-	std::string generator::get_symbol_set() const
-	{
-		return symbolSet;
+		return characterSpace;
 	}
 
 	void generator::generate(std::string fileName, int width, int height, std::ostream &outputStream) const
@@ -75,7 +70,7 @@ namespace ascii_refrigerator
 			{
 				float pixelGrayscale = get_pixel_grayscale(*(sourceView.at(x, y)));
 
-				outputStream << symbolSet[pixelGrayscale * (symbolSet.size() - 1)];
+				outputStream << characterSpace[pixelGrayscale * (characterSpace.size() - 1)];
 			}
 
 			outputStream << '\n';

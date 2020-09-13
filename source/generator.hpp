@@ -6,6 +6,7 @@
 
 #include <boost/gil.hpp>
 
+#include "character_space.hpp"
 #include "resize_method.hpp"
 
 namespace ascii_refrigerator
@@ -14,20 +15,19 @@ namespace ascii_refrigerator
 	{
 		public:
 		generator();
-		generator(std::string symbolSet);
+		generator(character_space characterSpace);
 		generator(resize_method resizeMethod);
-		generator(resize_method resizeMethod, std::string symbolSet);
+		generator(resize_method resizeMethod, character_space characterSpace);
 
 		void set_resize_method(resize_method newResizeMethod);
 		resize_method get_resize_method() const;
 
-		void set_symbol_set(std::string newSymbolSet);
-		std::string get_symbol_set() const;
+		character_space get_character_space() const;
 
 		void generate(std::string fileName, int width, int height, std::ostream& outputStream) const;
 
 		protected:
-		std::string symbolSet; // Temporary - this represents the symbols that will be used to generate the output.
+		const character_space characterSpace;
 		resize_method resizeMethod;
 
 		void read_image(std::string fileName, boost::gil::rgb8_image_t& destinationImage) const;
