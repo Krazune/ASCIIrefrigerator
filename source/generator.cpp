@@ -33,7 +33,7 @@ namespace ascii_refrigerator
 	{
 		boost::gil::gray8_image_t inputFile;
 
-		read_and_convert_image(fileName, inputFile);
+		boost::gil::read_and_convert_image(fileName, inputFile, boost::gil::bmp_tag());
 
 		if (width != 0 || height != 0)
 		{
@@ -60,11 +60,6 @@ namespace ascii_refrigerator
 	void generator::generate(std::string fileName, std::ostream& outputStream, bool invertCharacterSpace) const
 	{
 		generate(fileName, 0, 0, outputStream, invertCharacterSpace);
-	}
-
-	void generator::read_and_convert_image(std::string fileName, boost::gil::gray8_image_t& destinationImage) const
-	{
-		boost::gil::read_and_convert_image(fileName, destinationImage, boost::gil::bmp_tag());
 	}
 
 	void generator::resize_view(boost::gil::gray8c_view_t sourceView, boost::gil::gray8_view_t destinationView) const
