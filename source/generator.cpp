@@ -35,18 +35,18 @@ namespace ascii_refrigerator
 
 		boost::gil::read_and_convert_image(fileName, inputFile, boost::gil::bmp_tag());
 
-		if (width != 0 || height != 0)
+		if (width == 0)
 		{
-			if (width == 0)
-			{
-				width = inputFile.width();
-			}
+			width = inputFile.width();
+		}
 
-			if (height == 0)
-			{
-				height = inputFile.height();
-			}
+		if (height == 0)
+		{
+			height = inputFile.height();
+		}
 
+		if (width != inputFile.width() || height != inputFile.width())
+		{
 			boost::gil::gray8_image_t resizedImage(width, height);
 
 			resize_view(boost::gil::const_view(inputFile), boost::gil::view(resizedImage));
