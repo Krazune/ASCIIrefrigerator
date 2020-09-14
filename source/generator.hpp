@@ -32,13 +32,11 @@ namespace ascii_refrigerator
 		const character_space characterSpace;
 		const resize_method resizeMethod;
 
-		void read_image(std::string fileName, boost::gil::rgb8_image_t& destinationImage) const;
+		void read_and_convert_image(std::string fileName, boost::gil::gray8_image_t& destinationImage) const;
 
-		void resize_view(boost::gil::rgb8c_view_t sourceView, boost::gil::rgb8_view_t destinationView) const;
+		void resize_view(boost::gil::gray8c_view_t sourceView, boost::gil::gray8_view_t destinationView) const;
 
-		void generate_ascii(boost::gil::rgb8c_view_t sourceView, std::ostream& outputStream, bool invertCharacterSpace = false) const;
-
-		float get_pixel_grayscale(boost::gil::rgb8c_pixel_t pixel) const;
+		void generate_ascii(boost::gil::gray8c_view_t sourceView, std::ostream& outputStream, bool invertCharacterSpace = false) const;
 	};
 }
 
