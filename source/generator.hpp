@@ -27,6 +27,7 @@ namespace ascii_refrigerator
 		character_space get_character_space() const;
 
 		void generate(std::string fileName, int width, int height, std::ostream& outputStream, bool invertCharacterSpace = false) const;
+		void generate(std::string fileName, std::ostream& outputStream, bool invertCharacterSpace = false) const;
 
 		protected:
 		const character_space characterSpace;
