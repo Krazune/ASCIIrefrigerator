@@ -6,6 +6,8 @@
 
 namespace ascii_refrigerator
 {
+	character_space::character_space() : characters("") {}
+
 	character_space::character_space(const std::string characters) : characters(characters)
 	{
 		assert(!characters.empty());
