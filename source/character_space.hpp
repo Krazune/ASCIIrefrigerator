@@ -9,6 +9,7 @@ namespace ascii_refrigerator
 	class character_space
 	{
 		public:
+		character_space();
 		character_space(const std::string characters);
 
 		const char& operator[](std::size_t index) const;
@@ -21,7 +22,7 @@ namespace ascii_refrigerator
 		std::string get_characters() const;
 
 		protected:
-		const std::string characters;
+		std::string characters;
 	};
 }
 
