@@ -71,6 +71,8 @@ namespace ascii_refrigerator
 		int height = optionsMap["height"].as<int>();
 		std::ofstream outputFileStream;
 
+		outputFileStream.exceptions(std::ofstream::badbit);
+
 		try
 		{
 			outputFileStream = get_output_file_argument(optionsMap);
@@ -255,9 +257,37 @@ namespace ascii_refrigerator
 		{
 			throw;
 		}
+		catch (boost::program_options::ambiguous_option&)
+		{
+			std::cerr << "Error: ambiguous option.\n";
+		}
+		catch (boost::program_options::unknown_option&)
+		{
+			std::cerr << "Error: unknown option.\n";
+		}
+		catch (boost::program_options::invalid_command_line_syntax&)
+		{
+			std::cerr << "Error: invalid command line syntax.\n";
+		}
+		catch (boost::program_options::multiple_occurrences& error)
+		{
+			std::cerr << "Error: multiple occurrences of the option " << error.get_option_name() << " is not allowed.\n";
+		}
+		catch (boost::program_options::multiple_values& error)
+		{
+			std::cerr << "Error: multiple values given to the option " << error.get_option_name() << " is not allowed.\n";
+		}
+		catch (boost::program_options::required_option& error)
+		{
+			std::cerr << "Error: missing required option " << error.get_option_name() << ".\n";
+		}
+		catch (boost::program_options::validation_error& error)
+		{
+			std::cerr << "Error: invalid value given to the option " << error.get_option_name() << ".\n";
+		}
 		catch (...)
 		{
-			std::cout << "Temporary program option exception handler.\n";
+			std::cerr << "Error: exception caught while processing the program options.\n";
 		}
 	}
 
@@ -267,9 +297,17 @@ namespace ascii_refrigerator
 		{
 			throw;
 		}
+		catch (std::bad_alloc&)
+		{
+			std::cerr << "Error: exception caught while using the input file.\n";
+		}
+		catch (std::bad_cast&)
+		{
+			std::cerr << "Error: exception caught while using the input file.\n";
+		}
 		catch (...)
 		{
-			std::cout << "Temporary generator exception handler.\n";
+			std::cerr << "Error: exception caught while generating the output.\n";
 		}
 	}
 
@@ -281,7 +319,7 @@ namespace ascii_refrigerator
 		}
 		catch (...)
 		{
-			std::cout << "Temporary ouput file exception handler.\n";
+			std::cerr << "Error: exception caught while using the output file.\n";
 		}
 	}
 
