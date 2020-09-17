@@ -30,8 +30,8 @@ namespace ascii_refrigerator
 		void generate(const std::string fileName, std::ostream& outputStream, const bool invertCharacterSpace = false) const;
 
 		protected:
-		const character_space characterSpace;
 		const resize_method resizeMethod;
+		const character_space characterSpace;
 
 		void resize_view(boost::gil::gray8c_view_t sourceView, boost::gil::gray8_view_t destinationView) const;
 
