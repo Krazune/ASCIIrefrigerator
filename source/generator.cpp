@@ -83,7 +83,7 @@ namespace ascii_refrigerator
 			for (int x = 0; x < sourceView.width(); ++x)
 			{
 				float grayValue = *sourceView.at(x, y) / 255.0f;
-				int characterIndex = std::round(grayValue * (float)(characterSpace.size() - 1));
+				std::size_t characterIndex = std::round(grayValue * static_cast<float>(characterSpace.size() - 1));
 				char outputCharacter;
 
 				if (invertCharacterSpace)
