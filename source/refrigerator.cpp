@@ -1,52 +1,97 @@
 #include <string>
 #include <fstream>
 #include <iostream>
-#include <vector>
 
 #include <boost/program_options.hpp>
 
 #include "refrigerator.hpp"
 #include "generator.hpp"
+#include "resize_method.hpp"
+#include "character_space.hpp"
 
 namespace ascii_refrigerator
 {
-	refrigerator::refrigerator() {}
+	refrigerator::refrigerator() : visibleOptions("Options"), hiddenOptions("Hidden")
+	{
+		set_up_options();
+	}
 
 	bool refrigerator::generate(int argc, char **argv) const
 	{
-		boost::program_options::options_description visibleOptions("Options");
-		int width;
-		int height;
+		boost::program_options::variables_map optionsMap;
+		boost::program_options::parsed_options parsedOptions = boost::program_options::command_line_parser(argc, argv).options(options).positional(positionalOptions).run(); // Throws exceptions.
 
+		boost::program_options::store(parsedOptions, optionsMap); // Throws exceptions.
+
+		if (process_secondary_usages(optionsMap))
+		{
+			return true;
+		}
+
+		boost::program_options::notify(optionsMap); // Throws exceptions.
+
+		resize_method resizeMethod = get_resize_method_argument(optionsMap); // Throws exceptions.
+		character_space characterSpace = get_character_space_argument(optionsMap); // Throws exceptions
+
+		generator generator(resizeMethod, characterSpace);
+
+		std::string inputFileName = optionsMap["input-file"].as<std::string>();
+		int width = optionsMap["width"].as<int>();
+		int height = optionsMap["height"].as<int>();
+		std::ofstream outputFileStream = get_output_file_argument(optionsMap);  // Throws exceptions.
+		std::ostream& outputStream = (outputFileStream.is_open()) ? outputFileStream : std::cout;
+		bool invert = optionsMap.count("invert") > 0;
+
+		generator.generate(inputFileName, width, height, outputStream, invert); // Throws exceptions.
+
+		if (outputFileStream.is_open())
+		{
+			outputFileStream.close();
+		}
+
+		return true;
+	}
+
+	void refrigerator::set_up_options()
+	{
+		set_up_visible_options();
+		set_up_hidden_options();
+		set_up_positional_options();
+		join_options();
+	}
+
+	void refrigerator::set_up_visible_options()
+	{
 		visibleOptions.add_options()
 				("output-file,o", boost::program_options::value<std::string>(), "output file name")
-				("width,w", boost::program_options::value<int>(&width)->default_value(0), "output width")
-				("height,h", boost::program_options::value<int>(&height)->default_value(0), "output height")
+				("width,w", boost::program_options::value<int>()->default_value(0), "output width")
+				("height,h", boost::program_options::value<int>()->default_value(0), "output height")
 				("resize-method", boost::program_options::value<std::string>()->default_value("nearest-neighbor"), "resize sampling method (nearest-neighbor, or bilinear)")
 				("character-space", boost::program_options::value<std::string>(), "predefined character space (gradient9, or bw)")
 				("custom-character-space", boost::program_options::value<std::string>(), "custom character space string")
 				("invert", "invert output character space");
+	}
 
-		boost::program_options::options_description hiddenOptions("Hidden");
-
+	void refrigerator::set_up_hidden_options()
+	{
 		hiddenOptions.add_options()
 				("help", "print help message")
 				("version", "print version information")
 				("input-file", boost::program_options::value<std::string>()->required(), "input file");
+	}
 
-		boost::program_options::positional_options_description positionalOptions;
-
+	void refrigerator::set_up_positional_options()
+	{
 		positionalOptions.add("input-file", 1);
+	}
 
-		boost::program_options::options_description options;
-
+	void refrigerator::join_options()
+	{
 		options.add(visibleOptions).add(hiddenOptions);
+	}
 
-		boost::program_options::variables_map optionsMap;
-
-		// Throws exceptions.
-		boost::program_options::store(boost::program_options::command_line_parser(argc, argv).options(options).positional(positionalOptions).run(), optionsMap);
-
+	bool refrigerator::process_secondary_usages(const boost::program_options::variables_map& optionsMap) const
+	{
 		if (optionsMap.count("help") > 0)
 		{
 			print_help_message(visibleOptions);
@@ -61,32 +106,31 @@ namespace ascii_refrigerator
 			return true;
 		}
 
-		// Throws exceptions.
-		boost::program_options::notify(optionsMap);
+		return false;
+	}
 
-		std::string inputFileName = optionsMap["input-file"].as<std::string>();
+	resize_method refrigerator::get_resize_method_argument(const boost::program_options::variables_map &optionsMap) const
+	{
+		std::string resizeMethodString = optionsMap["resize-method"].as<std::string>();
 
-		resize_method resizeMethod;
-
-		if (optionsMap["resize-method"].as<std::string>() == "nearest-neighbor")
+		if (resizeMethodString == "nearest-neighbor")
 		{
-			resizeMethod = resize_method::nearest_neighbor;
+			return resize_method::nearest_neighbor;
 		}
-		else if (optionsMap["resize-method"].as<std::string>() == "bilinear")
+		else if (resizeMethodString == "bilinear")
 		{
-			resizeMethod = resize_method::bilinear;
-		}
-		else
-		{
-			boost::program_options::invalid_option_value error(optionsMap["resize-method"].as<std::string>());
-
-			error.set_option_name("--resize-method");
-
-			throw error;
+			return resize_method::bilinear;
 		}
 
-		character_space characterSpace = generator::gradient9Space;
+		boost::program_options::invalid_option_value error(optionsMap["resize-method"].as<std::string>());
 
+		error.set_option_name("--resize-method");
+
+		throw error;
+	}
+
+	character_space refrigerator::get_character_space_argument(const boost::program_options::variables_map &optionsMap) const
+	{
 		if (optionsMap.count("character-space") > 0)
 		{
 			if (optionsMap.count("custom-character-space") > 0)
@@ -95,26 +139,29 @@ namespace ascii_refrigerator
 				throw;
 			}
 
-			if (optionsMap["character-space"].as<std::string>() == "gradient9")
-			{
-			}
-			else if (optionsMap["character-space"].as<std::string>() == "bw")
-			{
-				characterSpace = generator::bwSpace;
-			}
-			else
-			{
-				boost::program_options::invalid_option_value error(optionsMap["character-space"].as<std::string>());
+			std::string characterSpaceString = optionsMap["character-space"].as<std::string>();
 
-				error.set_option_name("--character-space");
-
-				throw error;
+			if (characterSpaceString == "gradient9")
+			{
+				return generator::gradient9Space;
 			}
+			else if (characterSpaceString == "bw")
+			{
+				return generator::bwSpace;
+			}
+
+			boost::program_options::invalid_option_value error(optionsMap["character-space"].as<std::string>());
+
+			error.set_option_name("--character-space");
+
+			throw error;
 		}
 
 		if (optionsMap.count("custom-character-space") > 0)
 		{
-			if (optionsMap["custom-character-space"].as<std::string>() == "")
+			std::string customSpaceString = optionsMap["custom-character-space"].as<std::string>();
+
+			if (customSpaceString.empty())
 			{
 				boost::program_options::invalid_option_value error(optionsMap["custom-character-space"].as<std::string>());
 
@@ -123,25 +170,22 @@ namespace ascii_refrigerator
 				throw error;
 			}
 
-			characterSpace = character_space(optionsMap["custom-character-space"].as<std::string>());
+			return character_space(customSpaceString);
 		}
 
-		generator generator(resizeMethod, characterSpace);
+		return generator::gradient9Space;
+	}
 
+	std::ofstream refrigerator::get_output_file_argument(const boost::program_options::variables_map& optionsMap) const
+	{
 		std::ofstream outputFileStream;
 
 		if (optionsMap.count("output-file") > 0)
 		{
-			// Throws exceptions.
 			outputFileStream.open(optionsMap["output-file"].as<std::string>(), std::ofstream::out | std::ofstream::app);
 		}
 
-		bool invert = optionsMap.count("invert") > 0;
-
-		// Throws exceptions - close output file.
-		generator.generate(inputFileName, width, height, (outputFileStream.is_open()) ? outputFileStream : std::cout, invert); // Temporary ternary.
-
-		return true;
+		return outputFileStream;
 	}
 
 	void refrigerator::print_version_message() const
