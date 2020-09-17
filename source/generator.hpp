@@ -18,16 +18,16 @@ namespace ascii_refrigerator
 		const static character_space gradient9Space;
 
 		generator();
-		generator(character_space characterSpace);
-		generator(resize_method resizeMethod);
-		generator(resize_method resizeMethod, character_space characterSpace);
+		generator(const character_space characterSpace);
+		generator(const resize_method resizeMethod);
+		generator(const resize_method resizeMethod, const character_space characterSpace);
 
 		resize_method get_resize_method() const;
 
 		character_space get_character_space() const;
 
-		void generate(std::string fileName, int width, int height, std::ostream& outputStream, bool invertCharacterSpace = false) const;
-		void generate(std::string fileName, std::ostream& outputStream, bool invertCharacterSpace = false) const;
+		void generate(const std::string fileName, int width, int height, std::ostream& outputStream, const bool invertCharacterSpace = false) const;
+		void generate(const std::string fileName, std::ostream& outputStream, const bool invertCharacterSpace = false) const;
 
 		protected:
 		const character_space characterSpace;
