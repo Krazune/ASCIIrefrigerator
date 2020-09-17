@@ -36,6 +36,10 @@ namespace ascii_refrigerator
 		void print_help_message(const boost::program_options::options_description& options) const;
 		void print_usage_message() const;
 		void print_version_message() const;
+
+		void process_program_options_exceptions() const;
+		void process_generator_exceptions() const;
+		void process_output_file_exception() const;
 	};
 }
 

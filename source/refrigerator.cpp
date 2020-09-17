@@ -19,30 +19,82 @@ namespace ascii_refrigerator
 	bool refrigerator::generate(int argc, char **argv) const
 	{
 		boost::program_options::variables_map optionsMap;
-		boost::program_options::parsed_options parsedOptions = boost::program_options::command_line_parser(argc, argv).options(options).positional(positionalOptions).run(); // Throws exceptions.
 
-		boost::program_options::store(parsedOptions, optionsMap); // Throws exceptions.
+		try
+		{
+			boost::program_options::parsed_options parsedOptions = boost::program_options::command_line_parser(argc, argv).options(options).positional(positionalOptions).run();
+
+			boost::program_options::store(parsedOptions, optionsMap);
+		}
+		catch (...)
+		{
+			process_program_options_exceptions();
+
+			return false;
+		}
 
 		if (process_secondary_usages(optionsMap))
 		{
 			return true;
 		}
 
-		boost::program_options::notify(optionsMap); // Throws exceptions.
+		try
+		{
+			boost::program_options::notify(optionsMap);
+		}
+		catch (...)
+		{
+			process_program_options_exceptions();
 
-		resize_method resizeMethod = get_resize_method_argument(optionsMap); // Throws exceptions.
-		character_space characterSpace = get_character_space_argument(optionsMap); // Throws exceptions
+			return false;
+		}
+
+		resize_method resizeMethod;
+		character_space characterSpace;
+
+		try
+		{
+			resizeMethod = get_resize_method_argument(optionsMap);
+			characterSpace = get_character_space_argument(optionsMap);
+		}
+		catch (...)
+		{
+			process_program_options_exceptions();
+
+			return false;
+		}
 
 		generator generator(resizeMethod, characterSpace);
 
 		std::string inputFileName = optionsMap["input-file"].as<std::string>();
 		int width = optionsMap["width"].as<int>();
 		int height = optionsMap["height"].as<int>();
-		std::ofstream outputFileStream = get_output_file_argument(optionsMap);  // Throws exceptions.
+		std::ofstream outputFileStream;
+
+		try
+		{
+			outputFileStream = get_output_file_argument(optionsMap);
+		}
+		catch (...)
+		{
+			process_output_file_exception();
+
+			return false;
+		}
+
 		std::ostream& outputStream = (outputFileStream.is_open()) ? outputFileStream : std::cout;
 		bool invert = optionsMap.count("invert") > 0;
 
-		generator.generate(inputFileName, width, height, outputStream, invert); // Throws exceptions.
+		try
+		{
+			generator.generate(inputFileName, width, height, outputStream, invert);
+		}
+		catch (...)
+		{
+			process_generator_exceptions();
+
+			return false;
+		}
 
 		if (outputFileStream.is_open())
 		{
@@ -195,6 +247,42 @@ namespace ascii_refrigerator
 	void refrigerator::print_version_message() const
 	{
 		std::cout << "ASCIIrefrigerator\nVersion: 1.0.0\n";
+	}
+
+	void refrigerator::process_program_options_exceptions() const
+	{
+		try
+		{
+			throw;
+		}
+		catch (...)
+		{
+			std::cout << "Temporary program option exception handler.\n";
+		}
+	}
+
+	void refrigerator::process_generator_exceptions() const
+	{
+		try
+		{
+			throw;
+		}
+		catch (...)
+		{
+			std::cout << "Temporary generator exception handler.\n";
+		}
+	}
+
+	void refrigerator::process_output_file_exception() const
+	{
+		try
+		{
+			throw;
+		}
+		catch (...)
+		{
+			std::cout << "Temporary ouput file exception handler.\n";
+		}
 	}
 
 	void refrigerator::print_usage_message() const
