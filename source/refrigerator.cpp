@@ -135,8 +135,12 @@ namespace ascii_refrigerator
 		{
 			if (optionsMap.count("custom-character-space") > 0)
 			{
-				// Throw some error.
-				throw;
+				// Not the best exception type.
+				boost::program_options::multiple_occurrences error;
+
+				error.set_option_name("character-space");
+
+				throw error;
 			}
 
 			std::string characterSpaceString = optionsMap["character-space"].as<std::string>();
