@@ -271,7 +271,7 @@ namespace ascii_refrigerator
 
 	void refrigerator::print_version_message() const
 	{
-		std::cout << "ASCIIrefrigerator\nVersion: 1.0.0\n";
+		std::cout << "ASCIIrefrigerator\nVersion: 2020.09.1\n";
 	}
 
 	void refrigerator::process_program_options_exceptions() const
