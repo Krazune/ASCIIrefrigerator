@@ -29,7 +29,7 @@ namespace ascii_refrigerator
 		return characterSpace;
 	}
 
-	void generator::generate(std::string fileName, int width, int height, std::ostream &outputStream, bool invertCharacterSpace) const
+	void generator::generate(const std::string fileName, int width, int height, std::ostream &outputStream, const bool invertCharacterSpace) const
 	{
 		boost::gil::gray8_image_t inputFile;
 
@@ -57,7 +57,7 @@ namespace ascii_refrigerator
 		generate_ascii(boost::gil::const_view(inputFile), outputStream, invertCharacterSpace);
 	}
 
-	void generator::generate(std::string fileName, std::ostream& outputStream, bool invertCharacterSpace) const
+	void generator::generate(const std::string fileName, std::ostream& outputStream, const bool invertCharacterSpace) const
 	{
 		generate(fileName, 0, 0, outputStream, invertCharacterSpace);
 	}
@@ -83,7 +83,7 @@ namespace ascii_refrigerator
 			for (int x = 0; x < sourceView.width(); ++x)
 			{
 				float grayValue = *sourceView.at(x, y) / 255.0f;
-				int characterIndex = std::round(grayValue * (float)(characterSpace.size() - 1));
+				std::size_t characterIndex = std::round(grayValue * static_cast<float>(characterSpace.size() - 1));
 				char outputCharacter;
 
 				if (invertCharacterSpace)

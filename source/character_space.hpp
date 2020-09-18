@@ -16,8 +16,8 @@ namespace ascii_refrigerator
 
 		std::size_t size() const;
 
-		char at(std::size_t index) const;
-		char at_reversed(std::size_t index) const;
+		char at(const std::size_t index) const;
+		char at_reversed(const std::size_t index) const;
 
 		std::string get_characters() const;
 

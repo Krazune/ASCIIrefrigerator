@@ -23,12 +23,12 @@ namespace ascii_refrigerator
 		return characters.size();
 	}
 
-	char character_space::at(std::size_t index) const
+	char character_space::at(const std::size_t index) const
 	{
 		return characters.at(index);
 	}
 
-	char character_space::at_reversed(std::size_t index) const
+	char character_space::at_reversed(const std::size_t index) const
 	{
 		return characters.at(characters.size() - 1 - index);
 	}
